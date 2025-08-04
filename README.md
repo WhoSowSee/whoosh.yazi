@@ -23,15 +23,14 @@
 
 ## Support
 
-| OS | Status |
-|---------------------|------------------|
-| Windows | ✅ Supported |
-| Linux | ✅ Supported |
-| macOS | ✅ Supported |
-| FreeBSD | ✅ Supported |
-| OpenBSD | ✅ Supported |
-| NetBSD | ✅ Supported |
-| Android (Termux) | ✅ Supported |
+| OS                    | Status          |
+| --------------------- | --------------- |
+| Windows               | ✅ Supported    |
+| Linux                 | ✅ Supported    |
+| macOS                 | ✅ Supported    |
+| FreeBSD               | ✅ Supported    |
+| NetBSD                | ✅ Supported    |
+| Android (Termux)      | ✅ Supported    |
 
 ## Installation
 
@@ -88,7 +87,7 @@ require("whoosh"):setup {
   bookmarks = bookmarks,
 
   -- Notification settings
-  jump_notify = true,
+  jump_notify = false,
 
   -- Key generation for auto-assigning bookmark keys
   keys = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -98,89 +97,96 @@ require("whoosh"):setup {
          (os.getenv("HOME") .. "/.config/yazi/bookmark"),
 
   -- Path truncation in navigation menu
-  path_truncate_enabled = false,  -- Enable/disable path truncation
-  path_max_depth = 3,             -- Maximum path depth before truncation
+  path_truncate_enabled = false,                        -- Enable/disable path truncation
+  path_max_depth = 3,                                   -- Maximum path depth before truncation
 
   -- Path truncation in fuzzy search (fzf)
-  fzf_path_truncate_enabled = false,  -- Enable/disable path truncation in fzf
-  fzf_path_max_depth = 5,             -- Maximum path depth before truncation in fzf
+  fzf_path_truncate_enabled = false,                    -- Enable/disable path truncation in fzf
+  fzf_path_max_depth = 5,                               -- Maximum path depth before truncation in fzf
 
   -- Long folder name truncation
-  path_truncate_long_names_enabled = false,         -- Enable in navigation menu
-  fzf_path_truncate_long_names_enabled = false,     -- Enable in fzf
-  path_max_folder_name_length = 20,                 -- Max length in navigation menu
-  fzf_path_max_folder_name_length = 20,             -- Max length in fzf
+  path_truncate_long_names_enabled = false,             -- Enable in navigation menu
+  fzf_path_truncate_long_names_enabled = false,         -- Enable in fzf
+  path_max_folder_name_length = 20,                     -- Max length in navigation menu
+  fzf_path_max_folder_name_length = 20,                 -- Max length in fzf
+
+  -- History directory settings
+  history_size = 10,                                    -- Number of directories in history (default 10)
+  history_fzf_path_truncate_enabled = false,            -- Enable/disable path truncation by depth for history
+  history_fzf_path_max_depth = 5,                       -- Maximum path depth before truncation for history (default 5)
+  history_fzf_path_truncate_long_names_enabled = false, -- Enable/disable long folder name truncation for history
+  history_fzf_path_max_folder_name_length = 30,         -- Maximum length for folder names in history (default 30)
 }
 ```
 
 Add this to your `keymap.toml`:
 
 ```toml
+[[mgr.prepend_keymap]]
+on = "["
+run = "plugin whoosh jump_by_key"
+desc = "Jump bookmark by key"
+
+# Direct fuzzy search access
+[[mgr.prepend_keymap]]
+on = "}"
+run = "plugin whoosh fuzzy"
+desc = "Direct fuzzy search for bookmarks"
+
 # Basic bookmark operations
-[[manager.prepend_keymap]]
-on = [ "u", "a" ]
+[[mgr.prepend_keymap]]
+on = [ "]", "a" ]
 run = "plugin whoosh save"
 desc = "Add bookmark (hovered file/directory)"
 
-[[manager.prepend_keymap]]
-on = [ "u", "A" ]
+[[mgr.prepend_keymap]]
+on = [ "]", "A" ]
 run = "plugin whoosh save_cwd"
 desc = "Add bookmark (current directory)"
 
 # Temporary bookmarks
-[[manager.prepend_keymap]]
-on = [ "u", "t" ]
+[[mgr.prepend_keymap]]
+on = [ "]", "t" ]
 run = "plugin whoosh save_temp"
 desc = "Add temporary bookmark (hovered file/directory)"
 
-[[manager.prepend_keymap]]
-on = [ "u", "T" ]
+[[mgr.prepend_keymap]]
+on = [ "]", "T" ]
 run = "plugin whoosh save_cwd_temp"
 desc = "Add temporary bookmark (current directory)"
 
 # Jump to bookmarks
-[[manager.prepend_keymap]]
-on = [ "u", "g" ]
-run = "plugin whoosh jump_by_key"
-desc = "Jump bookmark by key"
-
-[[manager.prepend_keymap]]
-on = [ "u", "G" ]
+[[mgr.prepend_keymap]]
+on = [ "]", "f" ]
 run = "plugin whoosh jump_by_fzf"
 desc = "Jump bookmark by fzf"
 
 # Delete bookmarks
-[[manager.prepend_keymap]]
-on = [ "u", "d" ]
+[[mgr.prepend_keymap]]
+on = [ "]", "d" ]
 run = "plugin whoosh delete_by_key"
 desc = "Delete bookmark by key"
 
-[[manager.prepend_keymap]]
-on = [ "u", "D" ]
+[[mgr.prepend_keymap]]
+on = [ "]", "D" ]
 run = "plugin whoosh delete_by_fzf"
 desc = "Delete bookmarks by fzf (use TAB to select multiple)"
 
-[[manager.prepend_keymap]]
-on = [ "u", "C" ]
+[[mgr.prepend_keymap]]
+on = [ "]", "C" ]
 run = "plugin whoosh delete_all"
 desc = "Delete all user bookmarks"
 
 # Rename bookmarks
-[[manager.prepend_keymap]]
-on = [ "u", "r" ]
+[[mgr.prepend_keymap]]
+on = [ "]", "r" ]
 run = "plugin whoosh rename_by_key"
 desc = "Rename bookmark by key"
 
-[[manager.prepend_keymap]]
-on = [ "u", "R" ]
+[[mgr.prepend_keymap]]
+on = [ "]", "R" ]
 run = "plugin whoosh rename_by_fzf"
 desc = "Rename bookmark by fzf"
-
-# Direct fuzzy search access (similar to bunny.yazi)
-[[manager.prepend_keymap]]
-on = "}"
-run = "plugin whoosh fuzzy"
-desc = "Direct fuzzy search for bookmarks"
 ```
 
 ## Features
@@ -197,7 +203,7 @@ Session-only bookmarks that don't persist between Yazi restarts:
 ### Directory History
 
 <div style="text-align: center;">
-  <img src="image/history.png" alt="Plugin preview" width="1100px">
+  <img src="image/history.png" alt="History preview" width="1100px">
 </div>
 
 The plugin supports a smart directory history system:
@@ -250,7 +256,7 @@ The plugin supports the following configuration options in the `setup()` functio
 | Option                                 | Type    | Default                 | Description                                                        |
 | -------------------------------------- | ------- | ----------------------- | ------------------------------------------------------------------ |
 | `bookmarks`                            | table   | `{}`                    | Pre-configured bookmarks (cannot be deleted through plugin)        |
-| `jump_notify`                          | boolean | `true`                  | Show notification when jumping to a bookmark                       |
+| `jump_notify`                          | boolean | `false`                 | Show notification when jumping to a bookmark                       |
 | `keys`                                 | string  | `"0123456789abcdef..."` | Characters used for auto-generating bookmark keys                  |
 | `path`                                 | string  | OS-dependent            | File path where user bookmarks are stored                          |
 | `path_truncate_enabled`                | boolean | `false`                 | Enable/disable path truncation in navigation menu                  |
@@ -350,22 +356,22 @@ This feature significantly improves readability in deeply nested directory struc
 
 ## Available Commands
 
-| Command | Description |
-|---------|-------------|
-| `save` | Add bookmark for hovered file/directory |
-| `save_cwd` | Add bookmark for current working directory |
-| `save_temp` | Add temporary bookmark for hovered file/directory |
-| `save_cwd_temp` | Add temporary bookmark for current working directory |
-| `jump_by_key` | Open navigation menu to jump to bookmark by key |
-| `jump_by_fzf` | Open fuzzy search to jump to bookmark |
-| `delete_by_key` | Delete bookmark by selecting with key |
-| `delete_by_fzf` | Delete multiple bookmarks using fzf (TAB to select) |
-| `delete_all` | Delete all user-created bookmarks (excludes config bookmarks) |
-| `delete_all_temp` | Delete all temporary bookmarks |
-| `rename_by_key` | Rename bookmark by selecting with key |
-| `rename_by_fzf` | Rename bookmark using fuzzy search |
-| `history` | Show current tab's directory history via fzf |
-| `fuzzy` | Direct fuzzy search for bookmarks (similar to bunny.yazi) |
+| Command            | Description                                                   |
+| ------------------ | ------------------------------------------------------------- |
+| save               | Add bookmark for hovered file/directory                       |
+| save_cwd           | Add bookmark for current working directory                    |
+| save_temp          | Add temporary bookmark for hovered file/directory             |
+| save_cwd_temp      | Add temporary bookmark for current working directory          |
+| jump_by_key        | Open navigation menu to jump to bookmark by key               |
+| jump_by_fzf        | Open fuzzy search to jump to bookmark                         |
+| delete_by_key      | Delete bookmark by selecting with key                         |
+| delete_by_fzf      | Delete multiple bookmarks using fzf (TAB to select)           |
+| delete_all         | Delete all user-created bookmarks (excludes config bookmarks) |
+| delete_all_temp    | Delete all temporary bookmarks                                |
+| rename_by_key      | Rename bookmark by selecting with key                         |
+| rename_by_fzf      | Rename bookmark using fuzzy search                            |
+| history            | Show current tab's directory history via fzf                  |
+| fuzzy              | Direct fuzzy search for bookmarks                             |
 
 ### Navigation Menu Controls
 

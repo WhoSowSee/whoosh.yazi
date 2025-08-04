@@ -15,20 +15,19 @@
 > - **Быстрое создание закладок** - Создание временных закладок прямо из меню навигации
 
 <div style="text-align: center;">
-  <img src="image/plugin.png" alt="Plugin preview" width="1100px">
+  <img src="image/plugin.png" alt="Превью плагина" width="1100px">
 </div>
 
 ## Поддержка
 
-| Операционная система | Статус поддержки |
-|---------------------|------------------|
-| Windows | ✅ Поддерживается |
-| Linux | ✅ Поддерживается |
-| macOS | ✅ Поддерживается |
-| FreeBSD | ✅ Поддерживается |
-| OpenBSD | ✅ Поддерживается |
-| NetBSD | ✅ Поддерживается |
-| Android (Termux) | ✅ Поддерживается |
+| Операционная система | Статус поддержки  |
+| -------------------- | ----------------- |
+| Windows              | ✅ Поддерживается |
+| Linux                | ✅ Поддерживается |
+| macOS                | ✅ Поддерживается |
+| FreeBSD              | ✅ Поддерживается |
+| NetBSD               | ✅ Поддерживается |
+| Android (Termux)     | ✅ Поддерживается |
 
 ## Установка
 
@@ -87,7 +86,7 @@ require("whoosh"):setup {
   bookmarks = bookmarks,
 
   -- Настройки уведомлений
-  jump_notify = true,
+  jump_notify = false,
 
   -- Генерация ключей для автоматического назначения клавиш закладок
   keys = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -97,95 +96,96 @@ require("whoosh"):setup {
          (os.getenv("HOME") .. "/.config/yazi/bookmark"),
 
   -- Сокращение путей в меню навигации
-  path_truncate_enabled = false,  -- Включить/выключить сокращение путей
-  path_max_depth = 3,             -- Максимальная глубина пути перед сокращением
+  path_truncate_enabled = false,                        -- Включить/выключить сокращение путей
+  path_max_depth = 3,                                   -- Максимальная глубина пути перед сокращением
 
   -- Сокращение путей в нечетком поиске (fzf)
-  fzf_path_truncate_enabled = false,  -- Включить/выключить сокращение путей в fzf
-  fzf_path_max_depth = 5,             -- Максимальная глубина пути перед сокращением в fzf
+  fzf_path_truncate_enabled = false,                    -- Включить/выключить сокращение путей в fzf
+  fzf_path_max_depth = 5,                               -- Максимальная глубина пути перед сокращением в fzf
 
   -- Сокращение длинных названий папок
-  path_truncate_long_names_enabled = false,         -- Включить в меню навигации
-  fzf_path_truncate_long_names_enabled = false,     -- Включить в fzf
-  path_max_folder_name_length = 20,                 -- Максимальная длина в меню навигации
-  fzf_path_max_folder_name_length = 20,             -- Максимальная длина в fzf
+  path_truncate_long_names_enabled = false,             -- Включить в меню навигации
+  fzf_path_truncate_long_names_enabled = false,         -- Включить в fzf
+  path_max_folder_name_length = 20,                     -- Максимальная длина в меню навигации
+  fzf_path_max_folder_name_length = 20,                 -- Максимальная длина в fzf
 
   -- Настройки истории директорий
   history_size = 10,                                    -- Количество директорий в истории (по умолчанию 10)
-  history_fzf_path_truncate_enabled = false,           -- Включить сокращение путей по глубине для истории
-  history_fzf_path_max_depth = 5,                      -- Максимальная глубина путей для истории (по умолчанию 5)
+  history_fzf_path_truncate_enabled = false,            -- Включить сокращение путей по глубине для истории
+  history_fzf_path_max_depth = 5,                       -- Максимальная глубина путей для истории (по умолчанию 5)
   history_fzf_path_truncate_long_names_enabled = false, -- Включить сокращение длинных названий для истории
-  history_fzf_path_max_folder_name_length = 30,        -- Максимальная длина названий папок для истории (по умолчанию 30)
+  history_fzf_path_max_folder_name_length = 30,         -- Максимальная длина названий папок для истории (по умолчанию 30)
 }
 ```
 
 Добавьте это в ваш `keymap.toml`:
 
 ```toml
+[[mgr.prepend_keymap]]
+on = "["
+run = "plugin whoosh jump_by_key"
+desc = "Перейти к закладке по клавише"
+
+# Прямой доступ к нечеткому поиску закладок
+[[mgr.prepend_keymap]]
+on = "}"
+run = "plugin whoosh fuzzy"
+desc = "Прямой вызов fuzzy search закладок"
+
 # Основные операции с закладками
-[[manager.prepend_keymap]]
-on = [ "u", "a" ]
+[[mgr.prepend_keymap]]
+on = [ "]", "a" ]
 run = "plugin whoosh save"
 desc = "Добавить закладку (выделенный файл/директория)"
 
-[[manager.prepend_keymap]]
-on = [ "u", "A" ]
+[[mgr.prepend_keymap]]
+on = [ "]", "A" ]
 run = "plugin whoosh save_cwd"
 desc = "Добавить закладку (текущая директория)"
 
 # Временные закладки
-[[manager.prepend_keymap]]
-on = [ "u", "t" ]
+[[mgr.prepend_keymap]]
+on = [ "]", "t" ]
 run = "plugin whoosh save_temp"
 desc = "Добавить временную закладку (выделенный файл/директория)"
 
-[[manager.prepend_keymap]]
-on = [ "u", "T" ]
+[[mgr.prepend_keymap]]
+on = [ "]", "T" ]
 run = "plugin whoosh save_cwd_temp"
 desc = "Добавить временную закладку (текущая директория)"
 
 # Переход к закладкам
-[[manager.prepend_keymap]]
-on = [ "u", "g" ]
-run = "plugin whoosh jump_by_key"
-desc = "Перейти к закладке по клавише"
-
-[[manager.prepend_keymap]]
-on = [ "u", "G" ]
+[[mgr.prepend_keymap]]
+on = [ "]", "f" ]
 run = "plugin whoosh jump_by_fzf"
 desc = "Перейти к закладке через fzf"
 
 # Удаление закладок
-[[manager.prepend_keymap]]
-on = [ "u", "d" ]
+[[mgr.prepend_keymap]]
+on = [ "]", "d" ]
 run = "plugin whoosh delete_by_key"
 desc = "Удалить закладку по клавише"
 
-[[manager.prepend_keymap]]
-on = [ "u", "D" ]
+[[mgr.prepend_keymap]]
+on = [ "]", "D" ]
 run = "plugin whoosh delete_by_fzf"
 desc = "Удалить закладки через fzf (используйте TAB для выбора нескольких)"
 
-[[manager.prepend_keymap]]
-on = [ "u", "C" ]
+[[mgr.prepend_keymap]]
+on = [ "]", "C" ]
 run = "plugin whoosh delete_all"
 desc = "Удалить все пользовательские закладки"
 
 # Переименование закладок
-[[manager.prepend_keymap]]
-on = [ "u", "r" ]
+[[mgr.prepend_keymap]]
+on = [ "]", "r" ]
 run = "plugin whoosh rename_by_key"
 desc = "Переименовать закладку по клавише"
 
-[[manager.prepend_keymap]]
-on = [ "u", "R" ]
+[[mgr.prepend_keymap]]
+on = [ "]", "R" ]
 run = "plugin whoosh rename_by_fzf"
 desc = "Переименовать закладку через fzf"
-
-[[manager.prepend_keymap]]
-on = "}"
-run = "plugin whoosh fuzzy"
-desc = "Прямой вызов fuzzy search закладок"
 ```
 
 ## Функции
@@ -202,7 +202,7 @@ desc = "Прямой вызов fuzzy search закладок"
 ### История директорий
 
 <div style="text-align: center;">
-  <img src="image/history.png" alt="Plugin preview" width="1100px">
+  <img src="image/history.png" alt="Превью истории директорий" width="1100px">
 </div>
 
 Плагин поддерживает умную систему истории директорий:
@@ -255,7 +255,7 @@ desc = "Прямой вызов fuzzy search закладок"
 | Параметр                                       | Тип     | По умолчанию            | Описание                                                                   |
 | ---------------------------------------------- | ------- | ----------------------- | -------------------------------------------------------------------------- |
 | `bookmarks`                                    | table   | `{}`                    | Предварительно настроенные закладки (нельзя удалить через плагин)          |
-| `jump_notify`                                  | boolean | `true`                  | Показывать уведомление при переходе к закладке                             |
+| `jump_notify`                                  | boolean | `false`                 | Показывать уведомление при переходе к закладке                             |
 | `keys`                                         | string  | `"0123456789abcdef..."` | Символы, используемые для автогенерации ключей закладок                    |
 | `path`                                         | string  | Зависит от ОС           | Путь к файлу, где хранятся пользовательские закладки                       |
 | `path_truncate_enabled`                        | boolean | `false`                 | Включить/выключить сокращение путей в меню навигации                       |
@@ -372,7 +372,7 @@ local bookmarks = {
 | `rename_by_key`   | Переименовать закладку, выбрав по клавише                         |
 | `rename_by_fzf`   | Переименовать закладку с помощью нечеткого поиска                 |
 | `history`         | Показать историю директорий текущей вкладки через fzf             |
-| `fuzzy`           | Прямой вызов fuzzy search закладок (аналогично bunny.yazi)        |
+| `fuzzy`           | Прямой вызов fuzzy search закладок                                |
 
 ### Управление меню навигации
 
