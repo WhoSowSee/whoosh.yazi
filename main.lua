@@ -1103,7 +1103,7 @@ action_save = function(path, is_temp)
   local tag = path_obj and path_obj.tag or path:match(".*[\\/]([^\\/]+)[\\/]?$")
 
   while true do
-    local title = is_temp and "Tag (alias name) [TEMPORARY]" or "Tag (alias name)"
+    local title = is_temp and "Tag ⟨alias name⟩ [TEMPORARY]" or "Tag ⟨alias name⟩"
     local value, event = ya.input({ title = title, value = tag, position = { "top-center", y = 3, w = 40 } })
     if event ~= 1 then return end
     tag = value or ''
@@ -1133,7 +1133,7 @@ action_save = function(path, is_temp)
 
   while true do
     local value, event = ya.input({
-      title = "Key(s) (space or comma separated, optional)",
+      title = "Keys ⟨space, comma or empty separator⟩",
       value = key_display,
       position = { "top-center", y = 3, w = 50 }
     })
@@ -1206,7 +1206,7 @@ action_delete = function(path)
   local bookmark = temp_bookmarks[path] or user_bookmarks[path]
 
   if not bookmark then
-    ya.notify { title = "Bookmarks", content = 'Cannot delete: Not a user or temp bookmark.', timeout = 2, level = "warn" }
+    ya.notify { title = "Bookmarks", content = 'Cannot delete: Not a user or temp bookmark', timeout = 2, level = "warn" }
     return
   end
   local tag = bookmark.tag

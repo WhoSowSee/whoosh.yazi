@@ -290,14 +290,8 @@ local bookmarks = {
 **Features of simplified syntax:**
 
 - **Tilde expansion** - `~` is automatically expanded to home directory
-- **Path normalization** - Separators are automatically converted for your OS
+- **Path normalization** - Separators `/` are automatically converted for your OS
 - **Automatic trailing separator** - Directories get proper trailing separators
-
-**Path handling:**
-
-- Paths starting with `~` are expanded to the user's home directory
-- Forward slashes `/` work on all platforms and are converted as needed
-- Trailing separators are added automatically for directory paths
 
 ### Path Truncation
 
@@ -339,17 +333,17 @@ Long folder names can be truncated to improve readability in both navigation men
 
 **Examples with `path_max_folder_name_length = 20`:**
 
-- `VeryLongFolderNameThatExceedsLimit` → `VeryLongF...` (9 chars + "...")
-- `C:\VeryLongFolderNameThatExceedsLimit\Documents` → `C:\VeryLongF...\Documents`
+- `VeryLongFolderNameThatExceedsLimit` → `VeryLongF…` (9 chars + "…")
+- `C:\VeryLongFolderNameThatExceedsLimit\Documents` → `C:\VeryLongF…\Documents`
 - `ShortName` → `ShortName` (no change, under limit)
-- `/home/VeryLongFolderNameThatExceedsLimit/projects` → `/home/VeryLongF.../projects`
+- `/home/VeryLongFolderNameThatExceedsLimit/projects` → `/home/VeryLongF…/projects`
 
 **Combined with depth truncation:**
 
 When both folder name truncation and depth-based truncation are enabled, folder names are shortened first, then depth truncation is applied:
 
 - Original: `C:\Users\VeryLongFolderNameThatExceedsLimit\Documents\Projects\MyProject`
-- After folder name truncation: `C:\Users\VeryLongF...\Documents\Projects\MyProject`
+- After folder name truncation: `C:\Users\VeryLongF…\Documents\Projects\MyProject`
 - After depth truncation (max_depth=3): `C:\…\Projects\MyProject`
 
 This feature significantly improves readability in deeply nested directory structures while preserving the most relevant path information.

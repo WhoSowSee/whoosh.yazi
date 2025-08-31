@@ -287,14 +287,8 @@ local bookmarks = {
 **Особенности упрощенного синтаксиса:**
 
 - **Расширение тильды** - `~` автоматически расширяется до домашней директории
-- **Нормализация путей** - Разделители автоматически конвертируются для вашей ОС
+- **Нормализация путей** - Разделители `/` автоматически конвертируются для вашей ОС
 - **Автоматический завершающий разделитель** - Директории получают правильные завершающие разделители
-
-**Обработка путей:**
-
-- Пути, начинающиеся с `~`, расширяются до домашней директории пользователя
-- Прямые слеши `/` работают на всех платформах и конвертируются по необходимости
-- Завершающие разделители добавляются автоматически для путей директорий
 
 ### Сокращение путей
 
@@ -340,17 +334,17 @@ local bookmarks = {
 
 **Примеры с `path_max_folder_name_length = 20`:**
 
-- `VeryLongFolderNameThatExceedsLimit` → `VeryLongF...` (9 символов + "...")
-- `C:\VeryLongFolderNameThatExceedsLimit\Documents` → `C:\VeryLongF...\Documents`
+- `VeryLongFolderNameThatExceedsLimit` → `VeryLongF…` (9 символов + "…")
+- `C:\VeryLongFolderNameThatExceedsLimit\Documents` → `C:\VeryLongF…\Documents`
 - `ShortName` → `ShortName` (без изменений, под лимитом)
-- `/home/VeryLongFolderNameThatExceedsLimit/projects` → `/home/VeryLongF.../projects`
+- `/home/VeryLongFolderNameThatExceedsLimit/projects` → `/home/VeryLongF…/projects`
 
 **В сочетании с сокращением по глубине:**
 
 Когда включены как сокращение названий папок, так и сокращение по глубине, сначала сокращаются названия папок, затем применяется сокращение по глубине:
 
 - Оригинал: `C:\Users\VeryLongFolderNameThatExceedsLimit\Documents\Projects\MyProject`
-- После сокращения названий папок: `C:\Users\VeryLongF...\Documents\Projects\MyProject`
+- После сокращения названий папок: `C:\Users\VeryLongF…\Documents\Projects\MyProject`
 - После сокращения по глубине (max_depth=3): `C:\…\Projects\MyProject`
 
 Эта функция значительно улучшает читаемость в глубоко вложенных структурах директорий, сохраняя при этом наиболее релевантную информацию о пути.
