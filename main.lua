@@ -1094,7 +1094,12 @@ action_save = function(path, is_temp)
   local mb_path = get_state_attr("path")
   local all_bookmarks = get_all_bookmarks()
   local temp_bookmarks = get_temp_bookmarks()
-  local path_obj = all_bookmarks[path] or (temp_bookmarks and temp_bookmarks[path])
+  local path_obj
+  if is_temp and temp_bookmarks and temp_bookmarks[path] then
+    path_obj = temp_bookmarks[path]
+  else
+    path_obj = all_bookmarks[path] or (temp_bookmarks and temp_bookmarks[path])
+  end
   local tag = path_obj and path_obj.tag or path:match(".*[\\/]([^\\/]+)[\\/]?$")
 
   while true do
