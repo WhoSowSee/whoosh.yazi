@@ -454,14 +454,32 @@ local function deserialize_key_from_file(key_str)
   end
 
   if key_str:find(",") then
-    local keys = {}
-    for key in key_str:gmatch("[^,]+") do
-      key = key:gsub("^%s*(.-)%s*$", "%1")
-      if key ~= "" then
-        table.insert(keys, key)
+    local seq = {}
+    for token in key_str:gmatch("[^,%s]+") do
+      token = token:gsub("^%s*(.-)%s*$", "%1")
+      if token ~= "" then
+        if token:match("^<.->$") then
+          table.insert(seq, token)
+        else
+          for _, cp in utf8.codes(token) do
+            table.insert(seq, utf8.char(cp))
+          end
+        end
       end
     end
-    return keys
+    return seq
+  end
+
+  if key_str:match("^<.->$") then
+    return key_str
+  end
+
+  if utf8.len(key_str) > 1 then
+    local seq = {}
+    for _, cp in utf8.codes(key_str) do
+      table.insert(seq, utf8.char(cp))
+    end
+    return seq
   else
     return key_str
   end
@@ -961,29 +979,67 @@ action_jump = function(path)
 end
 
 local function parse_keys_input(input)
-  if not input or input == "" then
-    return {}
-  end
-
-  local keys = {}
-  for key in input:gmatch("[^%s,]+") do
-    key = key:gsub("^%s*(.-)%s*$", "%1")
-    if key ~= "" and utf8.len(key) == 1 then
-      table.insert(keys, key)
+  if not input or input == "" then return {} end
+  local seq = {}
+  for token in input:gmatch("[^,%s]+") do
+    token = token:gsub("^%s*(.-)%s*$", "%1")
+    if token ~= "" then
+      if token:match("^<.->$") then
+        table.insert(seq, token)
+      else
+        for _, cp in utf8.codes(token) do
+          table.insert(seq, utf8.char(cp))
+        end
+      end
     end
   end
-
-  return keys
+  return seq
 end
 
 local function format_keys_for_display(keys)
   if type(keys) == "table" then
-    return table.concat(keys, " ")
+    return table.concat(keys, ",")
   elseif type(keys) == "string" then
     return keys
   else
     return ""
   end
+end
+
+local function _seq_from_key(k)
+  if type(k) == "table" then
+    local out = {}
+    for _, t in ipairs(k) do
+      if t:match("^<.->$") then
+        table.insert(out, t)
+      else
+        for _, cp in utf8.codes(t) do
+          table.insert(out, utf8.char(cp))
+        end
+      end
+    end
+    return out
+  elseif type(k) == "string" then
+    return parse_keys_input(k)
+  else
+    return {}
+  end
+end
+
+local function _seq_equal(a, b)
+  if #a ~= #b then return false end
+  for i = 1, #a do if a[i] ~= b[i] then return false end end
+  return true
+end
+
+local function _seq_is_prefix(short, long)
+  if #short >= #long then return false end
+  for i = 1, #short do if short[i] ~= long[i] then return false end end
+  return true
+end
+
+local function _seq_to_string(seq)
+  return table.concat(seq, ",")
 end
 
 local generate_key = function()
@@ -1094,52 +1150,31 @@ action_save = function(path, is_temp)
       key = parsed_keys
     end
 
-    local has_duplicates = false
-    local duplicate_keys = {}
+    local new_seq = _seq_from_key(key)
+    local conflict, conflict_seq
 
-    local keys_to_check = type(key) == "table" and key or { key }
-    for _, k in ipairs(keys_to_check) do
-      local key_obj = nil
-      for _, item in pairs(all_bookmarks) do
-        if item.key then
-          local item_keys = type(item.key) == "table" and item.key or { item.key }
-          for _, item_k in ipairs(item_keys) do
-            if item_k == k and item.path ~= path then
-              key_obj = item
-              break
+    local function check(items)
+      for _, item in pairs(items or {}) do
+        if item and item.key and item.path ~= path then
+          local exist = _seq_from_key(item.key)
+          if #exist > 0 then
+            if _seq_equal(new_seq, exist) then
+              conflict, conflict_seq = "duplicate", exist; return true
             end
-          end
-          if key_obj then break end
-        end
-      end
-      if not key_obj and temp_bookmarks then
-        for _, item in pairs(temp_bookmarks) do
-          if item.key then
-            local item_keys = type(item.key) == "table" and item.key or { item.key }
-            for _, item_k in ipairs(item_keys) do
-              if item_k == k and item.path ~= path then
-                key_obj = item
-                break
-              end
+            if _seq_is_prefix(new_seq, exist) or _seq_is_prefix(exist, new_seq) then
+              conflict, conflict_seq = "prefix", exist; return true
             end
-            if key_obj then break end
           end
         end
       end
-
-      if key_obj then
-        has_duplicates = true
-        table.insert(duplicate_keys, k)
-      end
+      return false
     end
 
-    if has_duplicates then
-      ya.notify {
-        title = "Bookmarks",
-        content = "Duplicated key(s): " .. table.concat(duplicate_keys, ", "),
-        timeout = 2,
-        level = "info"
-      }
+    if check(all_bookmarks) or check(temp_bookmarks) then
+      local msg = (conflict == "duplicate")
+        and ("Duplicated key sequence: " .. _seq_to_string(new_seq))
+        or  ("Ambiguous with existing sequence: " .. _seq_to_string(conflict_seq))
+      ya.notify { title = "Bookmarks", content = msg, timeout = 2, level = "info" }
       key_display = input_str
     else
       break
@@ -1194,8 +1229,6 @@ action_delete_multi = function(paths)
   local deleted_temp_count = 0
   local deleted_names = {}
   local not_found_count = 0
-
-
 
   for _, path in ipairs(paths) do
     local bookmark = temp_bookmarks[path] or user_bookmarks[path]
@@ -1270,7 +1303,7 @@ return {
     local default_path = (ya.target_family() == "windows" and os.getenv("APPDATA") .. "\\yazi\\config\\bookmark") or
         (os.getenv("HOME") .. "/.config/yazi/bookmark")
     state.path = options.path or default_path
-    state.jump_notify = options.jump_notify == nil and false or options.jump_notify
+    state.jump_notify = options.jump_notify == nil and true or options.jump_notify
     state.path_truncate_enabled = options.path_truncate_enabled == nil and false or options.path_truncate_enabled
     state.path_max_depth = options.path_max_depth or 3
     state.fzf_path_truncate_enabled = options.fzf_path_truncate_enabled == nil and false or
