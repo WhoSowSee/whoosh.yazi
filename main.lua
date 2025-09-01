@@ -1308,7 +1308,7 @@ return {
     local default_path = (ya.target_family() == "windows" and os.getenv("APPDATA") .. "\\yazi\\config\\bookmark") or
         (os.getenv("HOME") .. "/.config/yazi/bookmark")
     state.path = options.path or default_path
-    state.jump_notify = options.jump_notify == nil and true or options.jump_notify
+    state.jump_notify = options.jump_notify == nil and false or options.jump_notify
     state.path_truncate_enabled = options.path_truncate_enabled == nil and false or options.path_truncate_enabled
     state.path_max_depth = options.path_max_depth or 3
     state.fzf_path_truncate_enabled = options.fzf_path_truncate_enabled == nil and false or
