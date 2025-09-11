@@ -1,4 +1,10 @@
-# whoosh.yazi 🌀
+<h1 align="center">🌀 whoosh.yazi</h1>
+<p align="center">
+  <b>A lightning-fast, keyboard-first bookmark manager for <a href="https://github.com/sxyazi/yazi">Yazi</a></b><br>
+  <i>Save, search, and jump to your favorite paths in a blink</i>
+</p>
+
+---
 
 > [!TIP]
 > **Russian version:** [README-RU.md](README-RU.md)
