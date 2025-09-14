@@ -1,6 +1,14 @@
 --- @since 25.5.28
 local path_sep = package.config:sub(1, 1)
 
+local function get_fzf_delimiter()
+  if ya.target_family() == "windows" then
+    return "--delimiter=\\t"
+  else
+    return "--delimiter='\t'"
+  end
+end
+
 local get_hovered_path = ya.sync(function(state)
   local h = cx.active.current.hovered
   if h then
@@ -556,7 +564,7 @@ fzf_find = function()
         temp_file:write(formatted_line .. "\t" .. item.path .. "\n")
       end
       temp_file:close()
-      cmd = string.format("fzf --delimiter='\\t' --with-nth=1 --prompt=\"Search > \" < \"%s\"", temp_file_path)
+      cmd = string.format("fzf %s --with-nth=1 --prompt=\"Search > \" < \"%s\"", get_fzf_delimiter(), temp_file_path)
     else
       temp_file:close()
       cmd = "echo No bookmarks found | fzf --prompt=\"Search > \""
@@ -637,7 +645,7 @@ fzf_find_for_rename = function()
         temp_file:write(formatted_line .. "\t" .. item.path .. "\n")
       end
       temp_file:close()
-      cmd = string.format("fzf --delimiter='\\t' --with-nth=1 --prompt=\"Rename > \" < \"%s\"", temp_file_path)
+      cmd = string.format("fzf %s --with-nth=1 --prompt=\"Rename > \" < \"%s\"", get_fzf_delimiter(), temp_file_path)
     else
       temp_file:close()
       cmd = "echo No bookmarks found | fzf --prompt=\"Rename > \""
@@ -715,8 +723,8 @@ fzf_find_multi = function()
         temp_file:write(formatted_line .. "\t" .. item.path .. "\n")
       end
       temp_file:close()
-      cmd = string.format("fzf --multi --delimiter='\\t' --with-nth=1 --prompt=\"Delete > \" < \"%s\"",
-        temp_file_path)
+      cmd = string.format("fzf --multi %s --with-nth=1 --prompt=\"Delete > \" < \"%s\"",
+        get_fzf_delimiter(), temp_file_path)
     else
       temp_file:close()
       cmd = "echo No deletable bookmarks found | fzf --prompt=\"Delete > \""
@@ -781,8 +789,8 @@ fzf_history = function()
     end
     temp_file:close()
 
-    local cmd = string.format("fzf --delimiter='\\t' --with-nth=1 --prompt=\"History > \" < \"%s\"",
-      temp_file_path)
+    local cmd = string.format("fzf %s --with-nth=1 --prompt=\"History > \" < \"%s\"",
+      get_fzf_delimiter(), temp_file_path)
     local handle = io.popen(cmd, "r")
     local result = ""
     if handle then
