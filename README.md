@@ -27,17 +27,6 @@
   <img src="image/plugin.png" alt="Plugin preview" width="1100px">
 </div>
 
-## Support
-
-| OS                    | Status          |
-| --------------------- | --------------- |
-| Windows               | ✅ Supported    |
-| Linux                 | ✅ Supported    |
-| macOS                 | ✅ Supported    |
-| FreeBSD               | ✅ Supported    |
-| NetBSD                | ✅ Supported    |
-| Android (Termux)      | ✅ Supported    |
-
 ## Installation
 
 > [!IMPORTANT]
