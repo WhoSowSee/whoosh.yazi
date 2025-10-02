@@ -216,12 +216,22 @@ local function truncate_path(path, max_parts)
       first_part = first_part:sub(1, -2)
     end
 
-    table.insert(result_parts, first_part)
+    if ya.target_family() ~= "windows" and first_part == "/" then
+      table.insert(result_parts, "")
+    else
+      table.insert(result_parts, first_part)
+    end
+
     table.insert(result_parts, "…")
     for i = #parts - max_parts + 2, #parts do
       table.insert(result_parts, parts[i])
     end
-    return table.concat(result_parts, separator)
+
+    local out = table.concat(result_parts, separator)
+    if ya.target_family() ~= "windows" then
+      out = out:gsub("^//+", "/")
+    end
+    return out
   else
     return normalized_path
   end
@@ -1186,7 +1196,7 @@ action_save = function(path, is_temp)
     if check(all_bookmarks) or check(temp_bookmarks) then
       local msg = (conflict == "duplicate")
         and ("Duplicated key sequence: " .. _seq_to_string(new_seq))
-        or  ("Ambiguous with existing sequence: " .. _seq_to_string(conflict_seq))
+        or ("Ambiguous with existing sequence: " .. _seq_to_string(conflict_seq))
       ya.notify { title = "Bookmarks", content = msg, timeout = 2, level = "info" }
       key_display = input_str
     else
