@@ -98,7 +98,7 @@ require("whoosh"):setup {
   },
 
   -- File path for storing user bookmarks
-  path = (ya.target_family() == "windows" and os.getenv("APPDATA") .. "\\yazi\\config\\bookmark") or
+  bookmarks_path = (ya.target_family() == "windows" and os.getenv("APPDATA") .. "\\yazi\\config\\bookmark") or
          (os.getenv("HOME") .. "/.config/yazi/bookmark"),
 
   -- Path truncation in navigation menu
