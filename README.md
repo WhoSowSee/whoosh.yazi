@@ -234,6 +234,45 @@ The plugin provides two ways to navigate history:
 1. **Through navigation menu** - When using `jump_by_key`, press `<Tab>` to access history
 2. **Direct access** - Use the `history` command or Tab key binding for direct fzf access to history
 
+#### Neovim `<Tab>` keymap (yazi.nvim)
+
+When this plugin runs inside [mikavilpas/yazi.nvim](https://github.com/mikavilpas/yazi.nvim), the default `<Tab>` mapping (`cycle_open_buffers`) is handled by Neovim before Yazi sees it. If pressing `<Tab>` returns you to the buffer where Yazi was opened, disable or remap that key in the yazi.nvim configuration so the directory history picker can receive it:
+
+```lua
+  opts = {
+    keymaps = {
+      cycle_open_buffers = false,
+    },
+      -- OR
+    keymaps = {
+      cycle_open_buffers = "<S-Tab>",
+    },
+  },
+```
+
+Full config file example:
+
+```lua
+return {
+  "mikavilpas/yazi.nvim",
+  version = "*",
+  event = "VeryLazy",
+  dependencies = { { "nvim-lua/plenary.nvim", lazy = true } },
+  keys = {
+    { "<leader>-", mode = { "n", "v" }, "<cmd>Yazi<cr>", desc = "Open Yazi" },
+    { "<leader>cw", "<cmd>Yazi cwd<cr>", desc = "Open Yazi at CWD" },
+  },
+  opts = {
+    open_for_directories = false,
+    keymaps = {
+      cycle_open_buffers = false,
+    },
+  },
+
+  init = function() vim.g.loaded_netrwPlugin = 1 end,
+}
+```
+
 ### Bookmark Types
 
 The plugin supports three types of bookmarks:

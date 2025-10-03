@@ -233,6 +233,45 @@ desc = "Переименовать закладку через fzf"
 1. **Через меню навигации** - При использовании `jump_by_key` нажмите `<Tab>` для доступа к истории
 2. **Прямой доступ** - Используйте команду `history` или привязку клавиши Tab для прямого доступа к fzf с историей
 
+#### Примечание о клавише `<Tab>` в Neovim (yazi.nvim)
+
+При запуске Whoosh внутри [mikavilpas/yazi.nvim](https://github.com/mikavilpas/yazi.nvim) стандартная привязка `<Tab>` (`cycle_open_buffers`) обрабатывается самим Neovim, поэтому Yazi не получает нажатие. Если нажатие `<Tab>` возвращает вас в буфер, из которого открывался Yazi, отключите или переназначьте эту клавишу в настройках yazi.nvim, чтобы корректно вызывать историю директорий:
+
+```lua
+  opts = {
+    keymaps = {
+      cycle_open_buffers = false,
+    },
+      -- OR
+    keymaps = {
+      cycle_open_buffers = "<S-Tab>",
+    },
+  },
+```
+
+Полный пример конфигурации:
+
+```lua
+return {
+  "mikavilpas/yazi.nvim",
+  version = "*",
+  event = "VeryLazy",
+  dependencies = { { "nvim-lua/plenary.nvim", lazy = true } },
+  keys = {
+    { "<leader>-", mode = { "n", "v" }, "<cmd>Yazi<cr>", desc = "Open Yazi" },
+    { "<leader>cw", "<cmd>Yazi cwd<cr>", desc = "Open Yazi at CWD" },
+  },
+  opts = {
+    open_for_directories = false,
+    keymaps = {
+      cycle_open_buffers = false,
+    },
+  },
+
+  init = function() vim.g.loaded_netrwPlugin = 1 end,
+}
+```
+
 ### Типы закладок
 
 Плагин поддерживает три типа закладок:
