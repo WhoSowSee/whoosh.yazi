@@ -1372,8 +1372,8 @@ end
 
 return {
   setup = function(state, options)
-    local default_path = (ya.target_family() == "windows" and os.getenv("APPDATA") .. "\\yazi\\config\\bookmark") or
-        (os.getenv("HOME") .. "/.config/yazi/bookmark")
+    local default_path = (ya.target_family() == "windows" and os.getenv("APPDATA") .. "\\yazi\\config\\bookmarks") or
+        (os.getenv("HOME") .. "/.config/yazi/bookmarks")
     local bookmarks_path = options.bookmarks_path or options.path
     if type(bookmarks_path) == "string" and bookmarks_path ~= '' then
         state.path = bookmarks_path
@@ -1562,3 +1562,4 @@ return {
     end
   end,
 }
+
