@@ -22,6 +22,7 @@
 > - **Directory history** - Navigate back to previous directory with Backspace
 > - **Tab history navigation** - Browse and jump to recently visited directories with Tab key
 > - **Quick bookmark creation** - Create temporary bookmarks directly from navigation menu
+> - **Configurable menu shortcuts** - Override the default Tab/Backspace/Enter/Space bindings from `init.lua`
 
 <div style="text-align: center;">
   <img src="image/plugin.png" alt="Plugin preview" width="1100px">
@@ -86,6 +87,15 @@ require("whoosh"):setup {
 
   -- Key generation for auto-assigning bookmark keys
   keys = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+
+  -- Configure the built-in menu action hotkeys
+  -- false - hide menu item
+  special_keys = {
+    create_temp = "<Enter>",         -- Create a temporary bookmark from the menu
+    fuzzy_search = "<Space>",        -- Launch fuzzy search (fzf)
+    history = "<Tab>",               -- Open directory history
+    previous_dir = "<Backspace>",    -- Jump back to the previous directory
+  },
 
   -- File path for storing user bookmarks
   path = (ya.target_family() == "windows" and os.getenv("APPDATA") .. "\\yazi\\config\\bookmark") or
@@ -292,6 +302,7 @@ The plugin supports the following configuration options in the `setup()` functio
 | `bookmarks`                            | table   | `{}`                    | Pre-configured bookmarks (cannot be deleted through plugin)        |
 | `jump_notify`                          | boolean | `false`                 | Show notification when jumping to a bookmark                       |
 | `keys`                                 | string  | `"0123456789abcdef..."` | Characters used for auto-generating bookmark keys                  |
+| `special_keys`                         | table   | `see description`       | Override the built-in menu shortcuts (Enter/Space/Tab/Backspace); set to `false` to hide an item |
 | `path`                                 | string  | OS-dependent            | File path where user bookmarks are stored                          |
 | `path_truncate_enabled`                | boolean | `false`                 | Enable/disable path truncation in navigation menu                  |
 | `path_max_depth`                       | number  | `3`                     | Maximum path depth before truncation with "…" in navigation menu   |
@@ -405,8 +416,8 @@ This feature significantly improves readability in deeply nested directory struc
 
 When using `jump_by_key`, the following special controls are available:
 
-| Key | Action |
-|-----|--------|
+| Default key | Action |
+| ------------ | ------ |
 | `<Enter>` | Create temporary bookmark for current directory |
 | `<Space>` | Open fuzzy search |
 | `<Tab>` | Open directory history (only if history exists) |

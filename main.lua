@@ -1,6 +1,13 @@
 --- @since 25.5.28
 local path_sep = package.config:sub(1, 1)
 
+local DEFAULT_SPECIAL_KEYS = {
+  create_temp = "<Enter>",
+  fuzzy_search = "<Space>",
+  history = "<Tab>",
+  previous_dir = "<Backspace>",
+}
+
 local function get_fzf_delimiter()
   if ya.target_family() == "windows" then
     return "--delimiter=\\t"
@@ -123,6 +130,38 @@ local function normalize_path(path)
   end
 
   return normalized_path
+end
+
+local function normalize_special_key(value, default)
+  if value == nil then
+    return default
+  end
+  if value == false then
+    return nil
+  end
+  if type(value) == "string" then
+    local trimmed = value:gsub("^%s*(.-)%s*$", "%1")
+    if trimmed == "" then
+      return nil
+    end
+    return trimmed
+  end
+  if type(value) == "table" then
+    local seq = {}
+    for _, item in ipairs(value) do
+      if type(item) == "string" then
+        local trimmed = item:gsub("^%s*(.-)%s*$", "%1")
+        if trimmed ~= "" then
+          table.insert(seq, trimmed)
+        end
+      end
+    end
+    if #seq == 0 then
+      return nil
+    end
+    return seq
+  end
+  return default
 end
 
 local function truncate_long_folder_names(path, max_folder_length)
@@ -826,8 +865,16 @@ end
 
 local create_special_menu_items = function()
   local special_items = {}
-  table.insert(special_items, { desc = "Create temporary bookmark", on = "<Enter>", path = "__CREATE_TEMP__" })
-  table.insert(special_items, { desc = "Fuzzy search", on = "<Space>", path = "__FUZZY_SEARCH__" })
+  local special_keys = get_state_attr("special_keys") or DEFAULT_SPECIAL_KEYS
+  local create_temp_key = special_keys.create_temp
+  if create_temp_key then
+    table.insert(special_items, { desc = "Create temporary bookmark", on = create_temp_key, path = "__CREATE_TEMP__" })
+  end
+
+  local fuzzy_search_key = special_keys.fuzzy_search
+  if fuzzy_search_key then
+    table.insert(special_items, { desc = "Fuzzy search", on = fuzzy_search_key, path = "__FUZZY_SEARCH__" })
+  end
 
   local current_tab = get_current_tab_idx()
   local history = get_tab_history(current_tab)
@@ -842,14 +889,16 @@ local create_special_menu_items = function()
     end
   end
 
-  if filtered_history and #filtered_history > 0 then
-    table.insert(special_items, { desc = "Directory history", on = "<Tab>", path = "__HISTORY__" })
+  local history_key = special_keys.history
+  if history_key and filtered_history and #filtered_history > 0 then
+    table.insert(special_items, { desc = "Directory history", on = history_key, path = "__HISTORY__" })
   end
 
-  if filtered_history and filtered_history[1] then
+  local previous_dir_key = special_keys.previous_dir
+  if previous_dir_key and filtered_history and filtered_history[1] then
     local previous_dir = filtered_history[1]
     local display_path = path_to_desc(previous_dir)
-    table.insert(special_items, { desc = "<- " .. display_path, on = "<Backspace>", path = previous_dir })
+    table.insert(special_items, { desc = "<- " .. display_path, on = previous_dir_key, path = previous_dir })
   end
 
   return special_items
@@ -1347,6 +1396,16 @@ return {
         false or
         options.history_fzf_path_truncate_long_names_enabled
     state.history_fzf_path_max_folder_name_length = options.history_fzf_path_max_folder_name_length or 30
+
+    local special_keys_options = options.special_keys or {}
+    local special_keys = {}
+    for name, default_key in pairs(DEFAULT_SPECIAL_KEYS) do
+      local normalized = normalize_special_key(special_keys_options[name], default_key)
+      if normalized ~= nil then
+        special_keys[name] = normalized
+      end
+    end
+    state.special_keys = special_keys
 
     ensure_directory(state.path)
     local keys = options.keys or "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
