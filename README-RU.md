@@ -100,6 +100,9 @@ require("whoosh"):setup {
   bookmarks_path = (ya.target_family() == "windows" and os.getenv("APPDATA") .. "\\yazi\\config\\bookmark") or
          (os.getenv("HOME") .. "/.config/yazi/bookmark"),
 
+  -- Подмена домашней директории на "~"
+  home_alias_enabled = true,                            -- Управляет отображением домашнего каталога
+
   -- Сокращение путей в меню навигации
   path_truncate_enabled = false,                        -- Включить/выключить сокращение путей
   path_max_depth = 3,                                   -- Максимальная глубина пути перед сокращением
@@ -303,6 +306,7 @@ return {
 | `keys`                                         | string  | `"0123456789abcdef..."` | Символы, используемые для автогенерации ключей закладок                    |
 | `special_keys`                                 | table   | `см. описание`           | Настройка клавиш встроенного меню (Enter/Space/Tab/Backspace); можно задать `false` для отключения |
 | `path`                                         | string  | Зависит от ОС           | Путь к файлу, где хранятся пользовательские закладки                       |
+| `home_alias_enabled`                          | boolean | `true`                  | Подменять домашнюю директорию на `~` в отображении пути                    |
 | `path_truncate_enabled`                        | boolean | `false`                 | Включить/выключить сокращение путей в меню навигации                       |
 | `path_max_depth`                               | number  | `3`                     | Максимальная глубина пути перед сокращением с "…" в меню навигации         |
 | `fzf_path_truncate_enabled`                    | boolean | `false`                 | Включить/выключить сокращение путей в нечетком поиске (fzf)                |

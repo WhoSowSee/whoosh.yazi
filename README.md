@@ -101,6 +101,9 @@ require("whoosh"):setup {
   bookmarks_path = (ya.target_family() == "windows" and os.getenv("APPDATA") .. "\\yazi\\config\\bookmark") or
          (os.getenv("HOME") .. "/.config/yazi/bookmark"),
 
+  -- Replace home directory with "~"
+  home_alias_enabled = true,                            -- Toggle home aliasing in displays
+
   -- Path truncation in navigation menu
   path_truncate_enabled = false,                        -- Enable/disable path truncation
   path_max_depth = 3,                                   -- Maximum path depth before truncation
@@ -304,6 +307,7 @@ The plugin supports the following configuration options in the `setup()` functio
 | `keys`                                 | string  | `"0123456789abcdef..."` | Characters used for auto-generating bookmark keys                  |
 | `special_keys`                         | table   | `see description`       | Override the built-in menu shortcuts (Enter/Space/Tab/Backspace); set to `false` to hide an item |
 | `path`                                 | string  | OS-dependent            | File path where user bookmarks are stored                          |
+| `home_alias_enabled`                  | boolean | `true`                  | Replace paths under the user's home directory with `~`              |
 | `path_truncate_enabled`                | boolean | `false`                 | Enable/disable path truncation in navigation menu                  |
 | `path_max_depth`                       | number  | `3`                     | Maximum path depth before truncation with "…" in navigation menu   |
 | `fzf_path_truncate_enabled`            | boolean | `false`                 | Enable/disable path truncation in fuzzy search (fzf)               |

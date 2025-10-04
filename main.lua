@@ -132,6 +132,58 @@ local function normalize_path(path)
   return normalized_path
 end
 
+local function apply_home_alias(path)
+  if not path or path == "" then
+    return path
+  end
+
+  local home_alias_enabled = get_state_attr("home_alias_enabled")
+  if home_alias_enabled == false then
+    return path
+  end
+
+  if path:sub(1, 1) == "~" then
+    return path
+  end
+
+  local home = os.getenv("HOME")
+  if ya.target_family() == "windows" and (not home or home == "") then
+    home = os.getenv("USERPROFILE")
+  end
+  if not home or home == "" then
+    return path
+  end
+
+  local normalized_home = normalize_path(home)
+  if not normalized_home or normalized_home == "" then
+    return path
+  end
+
+  local sep = path_sep
+
+  if ya.target_family() == "windows" then
+    local path_lower = path:lower()
+    local home_lower = normalized_home:lower()
+    if path_lower == home_lower then
+      return "~"
+    end
+    local prefix_lower = (normalized_home .. sep):lower()
+    if path_lower:sub(1, #prefix_lower) == prefix_lower then
+      return "~" .. path:sub(#normalized_home + 1)
+    end
+  else
+    if path == normalized_home then
+      return "~"
+    end
+    local prefix = normalized_home .. sep
+    if path:sub(1, #prefix) == prefix then
+      return "~" .. path:sub(#normalized_home + 1)
+    end
+  end
+
+  return path
+end
+
 local function normalize_special_key(value, default)
   if value == nil then
     return default
@@ -194,14 +246,7 @@ end
 local function truncate_path(path, max_parts)
   max_parts = max_parts or 3
   local normalized_path = normalize_path(path)
-
-  local home = os.getenv("HOME")
-  if home and home ~= "" then
-    local startPos, endPos = string.find(normalized_path, home)
-    if startPos == 1 then
-      normalized_path = "~" .. normalized_path:sub(endPos + 1)
-    end
-  end
+  normalized_path = apply_home_alias(normalized_path)
 
   local parts = {}
   local separator = ya.target_family() == "windows" and "\\" or "/"
@@ -278,7 +323,7 @@ end
 
 local function path_to_desc(path)
   local path_truncate_enabled = get_state_attr("path_truncate_enabled")
-  local result_path = normalize_path(path)
+  local result_path = apply_home_alias(normalize_path(path))
 
   local path_truncate_long_names_enabled = get_state_attr("path_truncate_long_names_enabled")
   if path_truncate_long_names_enabled == true then
@@ -368,7 +413,7 @@ end
 
 local function path_to_desc_for_fzf(path)
   local fzf_path_truncate_enabled = get_state_attr("fzf_path_truncate_enabled")
-  local result_path = normalize_path(path)
+  local result_path = apply_home_alias(normalize_path(path))
 
   local fzf_path_truncate_long_names_enabled = get_state_attr("fzf_path_truncate_long_names_enabled")
   if fzf_path_truncate_long_names_enabled == true then
@@ -386,7 +431,7 @@ end
 
 local function path_to_desc_for_history(path)
   local history_fzf_path_truncate_enabled = get_state_attr("history_fzf_path_truncate_enabled")
-  local result_path = normalize_path(path)
+  local result_path = apply_home_alias(normalize_path(path))
 
   local history_fzf_path_truncate_long_names_enabled = get_state_attr("history_fzf_path_truncate_long_names_enabled")
   if history_fzf_path_truncate_long_names_enabled == true then
@@ -1381,6 +1426,7 @@ return {
         state.path = default_path
     end
     state.jump_notify = options.jump_notify == nil and false or options.jump_notify
+    state.home_alias_enabled = options.home_alias_enabled == nil and true or options.home_alias_enabled
     state.path_truncate_enabled = options.path_truncate_enabled == nil and false or options.path_truncate_enabled
     state.path_max_depth = options.path_max_depth or 3
     state.fzf_path_truncate_enabled = options.fzf_path_truncate_enabled == nil and false or
@@ -1562,4 +1608,3 @@ return {
     end
   end,
 }
-
