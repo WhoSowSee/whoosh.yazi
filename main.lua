@@ -1595,11 +1595,6 @@ return {
         local temp_b = get_temp_bookmarks()
         action_save(path, temp_b[path] ~= nil)
       end
-    elseif action == "history" then
-      local selected_path = fzf_history()
-      if selected_path then
-        action_jump(selected_path)
-      end
     elseif action == "fuzzy" then
       local selected_path = fzf_find()
       if selected_path then

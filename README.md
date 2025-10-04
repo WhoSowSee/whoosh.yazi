@@ -245,7 +245,7 @@ When using `jump_by_key`, you get access to a smart navigation menu with:
 The plugin provides two ways to navigate history:
 
 1. **Through navigation menu** - When using `jump_by_key`, press `<Tab>` to access history
-2. **Direct access** - Use the `history` command or Tab key binding for direct fzf access to history
+2. **Direct access** - Trigger the configured history special key (default `<Tab>`) for direct fzf access to history
 
 #### Neovim `<Tab>` keymap (yazi.nvim)
 
@@ -413,7 +413,6 @@ This feature significantly improves readability in deeply nested directory struc
 | delete_all_temp    | Delete all temporary bookmarks                                |
 | rename_by_key      | Rename bookmark by selecting with key                         |
 | rename_by_fzf      | Rename bookmark using fuzzy search                            |
-| history            | Show current tab's directory history via fzf                  |
 | fuzzy              | Direct fuzzy search for bookmarks                             |
 
 ### Navigation Menu Controls
