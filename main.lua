@@ -1154,6 +1154,62 @@ local function _seq_to_string(seq)
   return table.concat(seq, ",")
 end
 
+local function find_path_by_key_sequence(seq)
+  if not seq or #seq == 0 then return nil end
+
+  local function matches(candidate)
+    if candidate == nil or candidate == "" then return false end
+    local candidate_seq = _seq_from_key(candidate)
+    if #candidate_seq == 0 then return false end
+    return _seq_equal(seq, candidate_seq)
+  end
+
+  for _, item in ipairs(create_special_menu_items() or {}) do
+    if matches(item.on) then
+      return item.path
+    end
+  end
+
+  local temp = get_temp_bookmarks()
+  for path, item in pairs(temp or {}) do
+    if matches(item.key) then
+      return path
+    end
+  end
+
+  local bookmarks = get_all_bookmarks()
+  for path, item in pairs(bookmarks or {}) do
+    if matches(item.key) then
+      return path
+    end
+  end
+
+  return nil
+end
+
+local function jump_by_key_spec(spec)
+  local cleaned = (spec or ""):gsub("^%s*(.-)%s*$", "%1")
+  if cleaned == "" then
+    ya.notify { title = "Bookmarks", content = "Missing key sequence", timeout = 1, level = "warn" }
+    return false
+  end
+
+  local seq = parse_keys_input(cleaned)
+  if #seq == 0 then
+    ya.notify { title = "Bookmarks", content = "Missing key sequence", timeout = 1, level = "warn" }
+    return false
+  end
+
+  local path = find_path_by_key_sequence(seq)
+  if not path then
+    ya.notify { title = "Bookmarks", content = "Bookmark not found for key: " .. _seq_to_string(seq), timeout = 1, level = "info" }
+    return false
+  end
+
+  action_jump(path)
+  return true
+end
+
 local generate_key = function()
   local keys = get_state_attr("keys")
   local key2rank = get_state_attr("key2rank")
@@ -1550,7 +1606,14 @@ return {
   end,
 
   entry = function(self, jobs)
-    local action = jobs.args[1]
+    local args = jobs.args or {}
+    local action = args[1]
+
+    if type(action) == "string" and action:sub(1, 4):lower() == "key_" then
+      jump_by_key_spec(action:sub(5))
+      return
+    end
+
     if not action then return end
 
     if action == "save" then

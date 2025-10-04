@@ -165,6 +165,11 @@ desc = "Add temporary bookmark (current directory)"
 
 # Jump to bookmarks
 [[mgr.prepend_keymap]]
+on = "<A-k>"
+run = "plugin whoosh key_k"
+desc = "Jump directly to bookmark with key k"
+
+[[mgr.prepend_keymap]]
 on = [ "]", "f" ]
 run = "plugin whoosh jump_by_fzf"
 desc = "Jump bookmark by fzf"
@@ -406,6 +411,7 @@ This feature significantly improves readability in deeply nested directory struc
 | save_temp          | Add temporary bookmark for hovered file/directory             |
 | save_cwd_temp      | Add temporary bookmark for current working directory          |
 | jump_by_key        | Open navigation menu to jump to bookmark by key               |
+| key_<sequence>     | Jump instantly to bookmark matching the provided key sequence |
 | jump_by_fzf        | Open fuzzy search to jump to bookmark                         |
 | delete_by_key      | Delete bookmark by selecting with key                         |
 | delete_by_fzf      | Delete multiple bookmarks using fzf (TAB to select)           |
@@ -413,6 +419,14 @@ This feature significantly improves readability in deeply nested directory struc
 | delete_all_temp    | Delete all temporary bookmarks                                |
 | rename_by_key      | Rename bookmark by selecting with key                         |
 | rename_by_fzf      | Rename bookmark using fuzzy search                            |
+
+### Direct Key Shortcuts
+
+You can jump without opening the menu by calling the plugin with an inline key sequence:
+
+- `plugin whoosh key_<sequence>` - inline sequence such as `key_k`, `key_<Space>`, or `key_bb`.
+
+Sequences must be provided inline; whitespace-separated forms are not supported. The format matches the bookmark editing prompt, so you can mix plain characters, comma-separated tokens, and special keys like `<Space>` or `<A-l>`.
 
 ### Navigation Menu Controls
 
