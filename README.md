@@ -138,7 +138,7 @@ desc = "Jump bookmark by key"
 # Direct fuzzy search access
 [[mgr.prepend_keymap]]
 on = "}"
-run = "plugin whoosh fuzzy"
+run = "plugin whoosh jump_by_fzf"
 desc = "Direct fuzzy search for bookmarks"
 
 # Basic bookmark operations
@@ -413,7 +413,6 @@ This feature significantly improves readability in deeply nested directory struc
 | delete_all_temp    | Delete all temporary bookmarks                                |
 | rename_by_key      | Rename bookmark by selecting with key                         |
 | rename_by_fzf      | Rename bookmark using fuzzy search                            |
-| fuzzy              | Direct fuzzy search for bookmarks                             |
 
 ### Navigation Menu Controls
 
