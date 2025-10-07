@@ -97,8 +97,8 @@ require("whoosh"):setup {
   },
 
   -- Путь к файлу для хранения пользовательских закладок
-  bookmarks_path = (ya.target_family() == "windows" and os.getenv("APPDATA") .. "\\yazi\\config\\bookmark") or
-         (os.getenv("HOME") .. "/.config/yazi/bookmark"),
+  bookmarks_path = (ya.target_family() == "windows" and os.getenv("APPDATA") .. "\\yazi\\config\\plugins\\whoosh.yazi\\bookmarks") or
+         (os.getenv("HOME") .. "/.config/yazi/plugins/whoosh.yazi/bookmarks"),
 
   -- Подмена домашней директории на "~"
   home_alias_enabled = true,                            -- Управляет отображением домашнего каталога
@@ -413,7 +413,7 @@ local bookmarks = {
 
 Эта функция значительно улучшает читаемость в глубоко вложенных структурах директорий, сохраняя при этом наиболее релевантную информацию о пути.
 
-### Список команд
+### Доступные команды
 
 | Команда           | Описание                                                             |
 | ----------------- | -------------------------------------------------------------------- |

@@ -98,8 +98,8 @@ require("whoosh"):setup {
   },
 
   -- File path for storing user bookmarks
-  bookmarks_path = (ya.target_family() == "windows" and os.getenv("APPDATA") .. "\\yazi\\config\\bookmark") or
-         (os.getenv("HOME") .. "/.config/yazi/bookmark"),
+  bookmarks_path = (ya.target_family() == "windows" and os.getenv("APPDATA") .. "\\yazi\\config\\plugins\\whoosh.yazi\\bookmarks") or
+         (os.getenv("HOME") .. "/.config/yazi/plugins/whoosh.yazi/bookmarks"),
 
   -- Replace home directory with "~"
   home_alias_enabled = true,                            -- Toggle home aliasing in displays
@@ -416,19 +416,19 @@ This feature significantly improves readability in deeply nested directory struc
 
 | Command            | Description                                                   |
 | ------------------ | ------------------------------------------------------------- |
-| save               | Add bookmark for hovered file/directory                       |
-| save_cwd           | Add bookmark for current working directory                    |
-| save_temp          | Add temporary bookmark for hovered file/directory             |
-| save_cwd_temp      | Add temporary bookmark for current working directory          |
-| jump_by_key        | Open navigation menu to jump to bookmark by key               |
-| jump_key_<keys>    | Jump instantly to bookmark matching the provided key sequence |
-| jump_by_fzf        | Open fuzzy search to jump to bookmark                         |
-| delete_by_key      | Delete bookmark by selecting with key                         |
-| delete_by_fzf      | Delete multiple bookmarks using fzf (TAB to select)           |
-| delete_all         | Delete all user-created bookmarks (excludes config bookmarks) |
-| delete_all_temp    | Delete all temporary bookmarks                                |
-| rename_by_key      | Rename bookmark by selecting with key                         |
-| rename_by_fzf      | Rename bookmark using fuzzy search                            |
+| `save`             | Add bookmark for hovered file/directory                       |
+| `save_cwd`         | Add bookmark for current working directory                    |
+| `save_temp`        | Add temporary bookmark for hovered file/directory             |
+| `save_cwd_temp`    | Add temporary bookmark for current working directory          |
+| `jump_by_key`      | Open navigation menu to jump to bookmark by key               |
+| `jump_key_<keys>`  | Jump instantly to bookmark matching the provided key sequence |
+| `jump_by_fzf`      | Open fuzzy search to jump to bookmark                         |
+| `delete_by_key`    | Delete bookmark by selecting with key                         |
+| `delete_by_fzf`    | Delete multiple bookmarks using fzf (TAB to select)           |
+| `delete_all`       | Delete all user-created bookmarks (excludes config bookmarks) |
+| `delete_all_temp`  | Delete all temporary bookmarks                                |
+| `rename_by_key`    | Rename bookmark by selecting with key                         |
+| `rename_by_fzf`      | Rename bookmark using fuzzy search                            |
 
 ### Direct Key Shortcuts
 
