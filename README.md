@@ -291,6 +291,16 @@ return {
 }
 ```
 
+If you prefer to keep Neovim's `<Tab>` binding but still want access to the history picker, remap whoosh's shortcut via `special_keys` in the `init.lua` file:
+
+```lua
+require("whoosh"):setup {
+  special_keys = {
+    history = "<H>",
+  },
+}
+```
+
 ### Bookmark Types
 
 The plugin supports three types of bookmarks:
