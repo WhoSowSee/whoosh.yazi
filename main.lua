@@ -1609,8 +1609,8 @@ return {
     local args = jobs.args or {}
     local action = args[1]
 
-    if type(action) == "string" and action:sub(1, 4):lower() == "key_" then
-      jump_by_key_spec(action:sub(5))
+    if type(action) == "string" and action:sub(1, 9):lower() == "jump_key_" then
+      jump_by_key_spec(action:sub(10))
       return
     end
 
