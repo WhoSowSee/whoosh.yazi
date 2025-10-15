@@ -340,28 +340,7 @@ local function path_to_desc(path)
 end
 
 local function get_display_width(str)
-  local width = 0
-  local i = 1
-  while i <= #str do
-    local byte = string.byte(str, i)
-    if byte < 128 then
-      width = width + 1
-      i = i + 1
-    elseif byte >= 194 and byte <= 223 then
-      width = width + 1
-      i = i + 2
-    elseif byte >= 224 and byte <= 239 then
-      width = width + 1
-      i = i + 3
-    elseif byte >= 240 and byte <= 247 then
-      width = width + 1
-      i = i + 4
-    else
-      width = width + 1
-      i = i + 1
-    end
-  end
-  return width
+  return ui.Line(str):width()
 end
 
 local function truncate_long_folder_names(path, max_folder_length)
