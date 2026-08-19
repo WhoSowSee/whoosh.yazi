@@ -103,13 +103,15 @@ end)
 local function ensure_directory(path)
   local dir_path = path:match("(.+)[\\/][^\\/]*$")
   if not dir_path then
-    return
+    return true
   end
-  if ya.target_family() == "windows" then
-    os.execute('mkdir "' .. dir_path:gsub("/", "\\") .. '" 2>nul')
-  else
-    os.execute('mkdir -p "' .. dir_path .. '"')
+
+  local ok, err = fs.create("dir_all", Url(dir_path))
+  if not ok then
+    notify("Failed to create directory: " .. dir_path .. "\nError: " .. tostring(err), "error", 2)
+    return false
   end
+  return true
 end
 
 local function normalize_path(path)
@@ -586,11 +588,14 @@ local function deserialize_key_from_file(key_str)
 end
 
 local save_to_file = function(mb_path, bookmarks)
-  ensure_directory(mb_path)
-  local file = io.open(mb_path, "w")
+  if not ensure_directory(mb_path) then
+    return false
+  end
+
+  local file, open_err = io.open(mb_path, "w")
   if file == nil then
-    notify("Cannot create bookmark file: " .. mb_path, "error", 2)
-    return
+    notify("Cannot create bookmark file: " .. mb_path .. "\nError: " .. tostring(open_err), "error", 2)
+    return false
   end
   local array = {}
   for _, item in pairs(bookmarks) do
@@ -599,9 +604,20 @@ local save_to_file = function(mb_path, bookmarks)
   sort_bookmarks(array, "tag", "key", true)
   for _, item in ipairs(array) do
     local serialized_key = serialize_key_for_file(item.key)
-    file:write(string.format("%s\t%s\t%s\n", item.tag, item.path, serialized_key))
+    local ok, write_err = file:write(string.format("%s\t%s\t%s\n", item.tag, item.path, serialized_key))
+    if not ok then
+      file:close()
+      notify("Cannot write bookmark file: " .. mb_path .. "\nError: " .. tostring(write_err), "error", 2)
+      return false
+    end
   end
-  file:close()
+
+  local ok, close_err = file:close()
+  if not ok then
+    notify("Cannot close bookmark file: " .. mb_path .. "\nError: " .. tostring(close_err), "error", 2)
+    return false
+  end
+  return true
 end
 
 --- Run fzf with given args and input lines
@@ -1211,8 +1227,9 @@ action_save = function(path, is_temp)
   else
     set_bookmarks(path, { tag = tag, path = path, key = key })
     local user_bookmarks = get_state_attr("bookmarks")
-    save_to_file(mb_path, user_bookmarks)
-    notify('"' .. tag .. '" saved')
+    if save_to_file(mb_path, user_bookmarks) then
+      notify('"' .. tag .. '" saved')
+    end
   end
 end
 
@@ -1237,8 +1254,9 @@ action_delete = function(path)
   else
     set_bookmarks(path, nil)
     local updated_user_bookmarks = get_state_attr("bookmarks")
-    save_to_file(mb_path, updated_user_bookmarks)
-    notify('"' .. tag .. '" deleted')
+    if save_to_file(mb_path, updated_user_bookmarks) then
+      notify('"' .. tag .. '" deleted')
+    end
   end
 end
 
@@ -1276,7 +1294,9 @@ action_delete_multi = function(paths)
 
   if deleted_count > 0 then
     local updated_user_bookmarks = get_state_attr("bookmarks")
-    save_to_file(mb_path, updated_user_bookmarks)
+    if not save_to_file(mb_path, updated_user_bookmarks) then
+      return
+    end
   end
 
   local total_deleted = deleted_count + deleted_temp_count
@@ -1317,8 +1337,9 @@ local action_delete_all = function(temp_only)
     notify("All temporary bookmarks deleted")
   else
     set_state_attr("bookmarks", {})
-    save_to_file(mb_path, {})
-    notify("All user-created bookmarks deleted")
+    if save_to_file(mb_path, {}) then
+      notify("All user-created bookmarks deleted")
+    end
   end
 end
 
@@ -1360,7 +1381,6 @@ return {
     end
     state.special_keys = special_keys
 
-    ensure_directory(state.path)
     local keys = options.keys or "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     state.keys, state.key2rank = {}, {}
     for i = 1, #keys do
