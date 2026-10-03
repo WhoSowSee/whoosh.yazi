@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="420" viewBox="0 0 820 420" role="img" aria-labelledby="chart-title" font-family="-apple-system,Segoe UI,Helvetica,Arial,sans-serif">
+<title id="chart-title">WhoSowSee/whoosh.yazi — История звёзд: 37</title>
+<rect width="820" height="420" rx="6" fill="#ffffff"/>
+<text x="76" y="30" fill="#24292f" font-size="17" font-weight="600">История звёзд</text>
+<text x="792" y="30" text-anchor="end" fill="#57606a" font-size="13">WhoSowSee/whoosh.yazi &#183; Звёзд: 37</text>
+<line x1="76" y1="368.0" x2="792" y2="368.0" stroke="#eaecef"/>
+<text x="68" y="372.0" text-anchor="end" fill="#57606a" font-size="11">0</text>
+<line x1="76" y1="307.2" x2="792" y2="307.2" stroke="#eaecef"/>
+<text x="68" y="311.2" text-anchor="end" fill="#57606a" font-size="11">10</text>
+<line x1="76" y1="246.4" x2="792" y2="246.4" stroke="#eaecef"/>
+<text x="68" y="250.4" text-anchor="end" fill="#57606a" font-size="11">20</text>
+<line x1="76" y1="185.6" x2="792" y2="185.6" stroke="#eaecef"/>
+<text x="68" y="189.6" text-anchor="end" fill="#57606a" font-size="11">30</text>
+<line x1="76" y1="124.8" x2="792" y2="124.8" stroke="#eaecef"/>
+<text x="68" y="128.8" text-anchor="end" fill="#57606a" font-size="11">40</text>
+<line x1="76" y1="64.0" x2="792" y2="64.0" stroke="#eaecef"/>
+<text x="68" y="68.0" text-anchor="end" fill="#57606a" font-size="11">50</text>
+<text x="76.0" y="388" text-anchor="start" fill="#57606a" font-size="11">авг 2025</text>
+<text x="255.0" y="388" text-anchor="middle" fill="#57606a" font-size="11">ноя 2025</text>
+<text x="434.0" y="388" text-anchor="middle" fill="#57606a" font-size="11">мар 2026</text>
+<text x="613.0" y="388" text-anchor="middle" fill="#57606a" font-size="11">июн 2026</text>
+<text x="792.0" y="388" text-anchor="end" fill="#57606a" font-size="11">сен 2026</text>
+<line x1="76" y1="368" x2="792" y2="368" stroke="#d0d7de" stroke-width="1.5"/>
+<polygon points="76,368 76.0,361.9 79.6,349.8 81.4,343.7 90.5,337.6 99.6,331.5 106.8,325.4 112.3,313.3 117.7,301.1 123.1,289.0 126.8,282.9 148.5,276.8 150.3,270.7 157.6,264.6 170.3,252.5 193.8,246.4 563.6,240.3 581.7,234.2 592.6,228.2 599.9,222.1 616.2,216.0 618.0,203.8 621.6,197.8 628.9,191.7 666.9,185.6 670.6,179.5 686.9,173.4 694.1,167.4 708.6,161.3 721.3,155.2 723.1,149.1 792.0,143.0 792.0,368" fill="#2f81f7" fill-opacity="0.12"/>
+<polyline points="76.0,361.9 79.6,349.8 81.4,343.7 90.5,337.6 99.6,331.5 106.8,325.4 112.3,313.3 117.7,301.1 123.1,289.0 126.8,282.9 148.5,276.8 150.3,270.7 157.6,264.6 170.3,252.5 193.8,246.4 563.6,240.3 581.7,234.2 592.6,228.2 599.9,222.1 616.2,216.0 618.0,203.8 621.6,197.8 628.9,191.7 666.9,185.6 670.6,179.5 686.9,173.4 694.1,167.4 708.6,161.3 721.3,155.2 723.1,149.1 792.0,143.0" fill="none" stroke="#2f81f7" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="792.0" cy="143.0" r="3.5" fill="#2f81f7"/>
+</svg>

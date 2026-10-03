@@ -1,0 +1,48 @@
+name: Update star history
+
+on:
+  schedule:
+    - cron: "5 3 * * 4"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: star-history
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v7
+
+      - name: Test chart generation
+        run: python3 .github/scripts/test_gen_star_history.py
+
+      - name: Generate star-history charts
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          STAR_HISTORY_REPO: ${{ github.repository }}
+        run: python3 .github/scripts/gen_star_history.py --repo "$STAR_HISTORY_REPO"
+
+      - name: Commit updated charts
+        run: |
+          charts=(
+            .github/assets/star-history-light.svg
+            .github/assets/star-history-dark.svg
+            .github/assets/star-history-light-ru.svg
+            .github/assets/star-history-dark-ru.svg
+          )
+          if git diff --quiet -- "${charts[@]}"; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "${charts[@]}"
+          git commit -m "Docs: update star history charts"
+          git push

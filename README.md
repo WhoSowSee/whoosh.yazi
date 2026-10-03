@@ -483,20 +483,22 @@ When using `jump_by_key`, the following special controls are available:
 
 ## Star History
 
+<!-- Self-hosted star history, refreshed by .github/workflows/star-history.yml. -->
 <p align="center">
-  <a href="https://starchart.cc/WhoSowSee/whoosh.yazi">
+  <a href="https://github.com/WhoSowSee/whoosh.yazi/stargazers">
     <picture>
       <source
         media="(prefers-color-scheme: dark)"
-        srcset="https://starchart.cc/WhoSowSee/whoosh.yazi.svg?variant=custom&background=%230d1117&axis=%238b949e&line=%232f81f7"
+        srcset=".github/assets/star-history-dark.svg"
       />
       <source
         media="(prefers-color-scheme: light)"
-        srcset="https://starchart.cc/WhoSowSee/whoosh.yazi.svg?variant=custom&background=%23ffffff&axis=%2357606a&line=%230969da"
+        srcset=".github/assets/star-history-light.svg"
       />
       <img
         alt="Stargazers over time"
-        src="https://starchart.cc/WhoSowSee/whoosh.yazi.svg?variant=custom&background=%23ffffff&axis=%2357606a&line=%230969da"
+        src=".github/assets/star-history-light.svg"
+        width="820"
       />
     </picture>
   </a>
