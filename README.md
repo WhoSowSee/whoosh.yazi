@@ -16,16 +16,13 @@
 > [!NOTE]
 > [Yazi](https://github.com/sxyazi/yazi) plugin for bookmark management, supporting the following features:
 >
-> - **Persistent bookmarks** - No bookmarks are lost after you close yazi
-> - **Temporary bookmarks** - Session-only bookmarks that don't persist between restarts
+> - **Persistent and temporary bookmarks** - Keep favorite paths across restarts or for the current session
 > - **Quick navigation** - Jump, delete, and rename bookmarks by keymap
 > - **Fuzzy search** - Support fuzzy search through [fzf](https://github.com/junegunn/fzf)
 > - **Multiple bookmark deletion** - Select multiple bookmarks with TAB in fzf
 > - **Configuration bookmarks** - Pre-configure bookmarks using Lua language
 > - **Smart path truncation** - Configurable path shortening for better readability
-> - **Directory history** - Navigate back to previous directory with Backspace
-> - **Tab history navigation** - Browse and jump to recently visited directories with Tab key
-> - **Quick bookmark creation** - Create temporary bookmarks directly from navigation menu
+> - **Directory history** - Browse recently visited directories or return to the previous location
 > - **Project root navigation** - Jump to the current Git repository root with `-`
 > - **Configurable menu shortcuts** - Override the default Tab/Backspace/Enter/Space/- bindings from `init.lua`
 
@@ -209,56 +206,17 @@ desc = "Rename bookmark by fzf"
 
 ## Features
 
-### Temporary Bookmarks
-
-Session-only bookmarks that don't persist between Yazi restarts:
-
-- Create using `save_temp` or `save_cwd_temp` commands
-- Identified with [TEMP] prefix in navigation menu and fzf
-- Automatically cleared when Yazi restarts
-- Can be deleted individually or all at once with `delete_all_temp`
-
 ### Directory History
 
 <div style="text-align: center;">
   <img src="image/history.png" alt="History preview" width="1100px">
 </div>
 
-The plugin supports a smart directory history system:
+Each tab keeps its own session history, with recent directories first and the current directory excluded. Set `history_size` to change how many directories are kept (default: 10).
 
-- **Independent history per tab** - Each tab maintains its own history
-- **Automatic tracking** - History updates when navigating between directories
-- **Current directory filtering** - Current directory is excluded from history display
-- **Configurable size** - Number of stored directories is configurable (default 10)
-- **Separate truncation settings** - Independent path display settings for history
+See [Navigation Menu Controls](#navigation-menu-controls) for shortcuts.
 
-**System behavior:**
-
-- History is empty on first yazi startup
-- Previous directories are added to history only when navigating to a new directory
-- New items are added to the beginning of the list (sorted from newest to oldest)
-- When limit is exceeded, oldest items are removed
-- Duplicates are automatically removed and moved to the top
-
-### Navigation Menu Features
-
-When using `jump_by_key`, you get access to a smart navigation menu with:
-
-- **Create temporary bookmark** - Press `<Enter>` to quickly bookmark current directory
-- **Fuzzy search** - Press `<Space>` to open fzf search
-- **Directory history** - Press `<Tab>` to browse history via fzf (only if history exists)
-- **Previous directory** - Press `<Backspace>` to return to the previous directory (if available)
-- **Project root** - Press `-` to jump to the current Git repository root (when inside a repository)
-- **All bookmarks** - Both permanent and temporary bookmarks with clear visual distinction
-
-### Directory History Navigation
-
-The plugin provides two ways to navigate history:
-
-1. **Through navigation menu** - When using `jump_by_key`, press `<Tab>` to access history
-2. **Direct access** - Trigger the configured history special key (default `<Tab>`) for direct fzf access to history
-
-#### Neovim `<Tab>` keymap (yazi.nvim)
+### Neovim `<Tab>` keymap (yazi.nvim)
 
 When this plugin runs inside [mikavilpas/yazi.nvim](https://github.com/mikavilpas/yazi.nvim), the default `<Tab>` mapping (`cycle_open_buffers`) is handled by Neovim before Yazi sees it. If pressing `<Tab>` returns you to the buffer where Yazi was opened, disable or remap that key in the yazi.nvim configuration so the directory history picker can receive it:
 
@@ -328,7 +286,7 @@ The plugin supports three types of bookmarks:
 
 1. **Configuration bookmarks** - Defined in `init.lua`, cannot be deleted through the plugin
 2. **User bookmarks** - Created during usage, saved to file, can be deleted
-3. **Temporary bookmarks** - Session-only, stored in memory, cleared on restart
+3. **Temporary bookmarks** - Cleared on restart; marked `[TEMP]` in the menu and fzf
 
 When paths conflict, user bookmarks override configuration bookmarks in the display
 
@@ -380,58 +338,9 @@ local bookmarks = {
 
 ### Path Truncation
 
-The path truncation feature can be controlled by two options:
+Shorten displayed paths by depth with `path_truncate_enabled` and `path_max_depth`, or by folder name length with `path_truncate_long_names_enabled` and `path_max_folder_name_length`. Both options are disabled by default and can be enabled independently.
 
-- `path_truncate_enabled` (boolean, default: `false`) - Enables or disables path truncation entirely. If not specified in config, defaults to `false`
-- `path_max_depth` (number, default: `3`) - Controls how long paths are displayed in the navigation menu
-
-When `path_truncate_enabled` is explicitly set to `true` and a path has more directory levels than `path_max_depth`, the beginning parts are replaced with "…" to keep the display concise.
-
-**By default (when `path_truncate_enabled` is not specified or set to `false`):**
-
-- All paths are displayed in full without truncation
-- `C:\Users\Documents\Projects\MyProject` → `C:\Users\Documents\Projects\MyProject` (full path)
-
-**With `path_truncate_enabled = true` and `path_max_depth = 3`:**
-
-- `C:\Users\Documents` → `C:\Users\Documents` (no change, 3 parts)
-- `C:\Users\Documents\Projects\MyProject` → `C:\…\Projects\MyProject` (truncated, 5 parts)
-- `~/.config/yazi/plugins/whoosh.yazi` → `~\…\plugins\whoosh.yazi` (truncated, 5 parts)
-
-#### Folder Name Length Truncation
-
-Long folder names can be truncated to improve readability in both navigation menu and fuzzy search:
-
-**Configuration Options:**
-
-- `path_truncate_long_names_enabled` (boolean, default: `false`) - Enable/disable for navigation menu
-- `fzf_path_truncate_long_names_enabled` (boolean, default: `false`) - Enable/disable for fuzzy search (fzf)
-- `path_max_folder_name_length` (number, default: `20`) - Maximum length for folder names in navigation menu
-- `fzf_path_max_folder_name_length` (number, default: `20`) - Maximum length for folder names in fuzzy search
-
-**How it works:**
-
-- Individual folder names longer than the specified limit are truncated to 40% of the limit + "..."
-- This truncation is applied to each folder name separately and works independently of depth-based path truncation
-- Both truncation methods can be used together for optimal display
-- Windows drive letters (e.g., `C:\`) are handled specially and never truncated
-
-**Examples with `path_max_folder_name_length = 20`:**
-
-- `VeryLongFolderNameThatExceedsLimit` → `VeryLongF…` (9 chars + "…")
-- `C:\VeryLongFolderNameThatExceedsLimit\Documents` → `C:\VeryLongF…\Documents`
-- `ShortName` → `ShortName` (no change, under limit)
-- `/home/VeryLongFolderNameThatExceedsLimit/projects` → `/home/VeryLongF…/projects`
-
-**Combined with depth truncation:**
-
-When both folder name truncation and depth-based truncation are enabled, folder names are shortened first, then depth truncation is applied:
-
-- Original: `C:\Users\VeryLongFolderNameThatExceedsLimit\Documents\Projects\MyProject`
-- After folder name truncation: `C:\Users\VeryLongF…\Documents\Projects\MyProject`
-- After depth truncation (max_depth=3): `C:\…\Projects\MyProject`
-
-This feature significantly improves readability in deeply nested directory structures while preserving the most relevant path information.
+Bookmark search (`fzf_path_*`) and directory history (`history_fzf_path_*`) have separate settings listed in the [configuration table](#configuration-options). These settings affect only how paths are displayed.
 
 ## Available Commands
 
@@ -481,7 +390,7 @@ When using `jump_by_key`, the following special controls are available:
 - [yamb](https://github.com/h-hg/yamb.yazi)
 - [bunny](https://github.com/stelcodes/bunny.yazi)
 
-## Star History
+---
 
 <!-- Self-hosted star history, refreshed by .github/workflows/star-history.yml. -->
 <p align="center">
